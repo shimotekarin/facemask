@@ -1,0 +1,40 @@
+<h2>詳細</h2>
+<div class="mask">
+
+
+<% if @mask.image.attached? %>
+  <%= image_tag @mask.image, size: '250x200'%>
+<% end %>
+
+  <p><%= @mask.body %></p>
+  <p><%= l @mask.updated_at, format: :short %></p>
+
+  <h4>総合評価：
+    <span class="star-rating">
+        <span class="star-rating-front" style="width: <%= getPercent(@mask.overall) %>%;">★★★★★</span>
+        <span class="star-rating-back">★★★★★</span>
+    </span> 
+    </h4>
+
+  <% if user_signed_in? %>
+    <% if current_user.already_liked?(@mask) %>
+      <%= link_to mask_like_path(@mask), method: :delete do %>
+        <i class="far fa-heart"></i><%= @mask.likes.count %>
+      <% end %>
+    <% else %>
+      <%= link_to mask_likes_path(@mask), method: :post do %>
+        <i class="far fa-heart"></i><%= @mask.likes.count %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <i class="far fa-heart"></i><%= @mask.likes.count %>
+  <% end %>
+</div>
+
+<h2>いいねしたユーザー</h2>
+<% @mask.liked_users.each do |user| %>
+  <li><%= user.email %></li>
+<% end %>
+
+<%= link_to "編集する", edit_mask_path(@mask.id) %>
+<%= link_to "投稿一覧に戻る", masks_path %>

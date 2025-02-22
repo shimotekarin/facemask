@@ -1,0 +1,50 @@
+<h1>プロフィール</h1>
+<% if @user.image.attached? %>
+     <%= image_tag  @user.image, size: '250x200'%>
+<% end %>
+
+<p>名前 : <%= @user.name %></p>
+<p>メールアドレス : <%= @user.email %></p>
+<p>プロフィール : <%= @user.profile %></p>
+
+<% if user_signed_in? %>
+<% if current_user.id == @user.id %>
+  <%= link_to "編集する", edit_user_registration_path %>
+<% end %>
+
+<h2>投稿一覧</h2>
+<%= link_to "新規投稿する", new_mask_path %>
+<p><% @user.masks.each do |t| %>
+  <%= t.user.name %>
+  <%= t.body %>
+<% end %></p>
+
+<h2>下書き一覧</h2>
+<% if @drafts.any? %>
+  <% @drafts.each do |draft| %>
+    <div class="draft">
+      <p><strong>内容:</strong> <%= draft.body.presence || "（未記入）" %></p>
+
+      <!-- 編集ボタン -->
+      <%= link_to "編集", edit_mask_path(draft), class: "btn btn-primary" %>
+
+      <!-- 下書きを公開するボタン -->
+      <%= button_to "公開する", mask_path(draft, mask: { is_draft: false }), method: :patch, class: "btn btn-success", data: { confirm: "この下書きを公開しますか？" } %>
+
+      <!-- 削除ボタン -->
+      <%= link_to "削除", mask_path(draft), method: :delete, class: "btn btn-danger", data: { confirm: "本当に削除しますか？" } %>
+    </div>
+    <hr>
+    <% end %>
+  <% else %>
+  <p>下書きはありません。</p>
+<% end %>
+
+<h3>いいねした投稿一覧</h3>
+<% @user.liked_tweets.each do |t| %>
+  <%= t.user.name %>
+  <%= t.body %>
+<% end %>
+<% end %>
+
+<p><%= link_to "みんなの投稿へ", masks_path %></p>

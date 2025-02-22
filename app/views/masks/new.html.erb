@@ -1,0 +1,67 @@
+<h2>新規投稿</h2>
+<%= form_for @mask do |f| %>
+  <div class="field">
+    <%= f.label :商品名 %>
+    <%= f.text_field :mask_name, :size => 30 %>
+  </div>
+
+  <div class="field">
+    <%= f.label :おすすめの肌タイプ  %>
+    <%= f.select :skintype, 
+    [["普通肌", "普通肌"], 
+    ["乾燥肌", "乾燥肌"], 
+    ["脂性肌", "脂性肌"],
+    ["混合肌","混合肌"]], include_blank: "選択して下さい" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :レビュー %>
+    <%= f.text_area :body, :size => "30x2" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :画像添付 %>
+    <%= f.file_field :image %>
+  </div>
+
+  <h5>総合評価</h5>
+   <div class="post_form">
+    <%= f.radio_button :overall, 5 ,id: 'star1'%>
+    <label for="star1"><span class="text">最高</span>★</label>
+
+    <%= f.radio_button :overall, 4 ,id: 'star2'%>
+    <label for="star2"><span class="text">良い</span>★</label>
+
+    <%= f.radio_button :overall, 3 ,id: 'star3'%>
+    <label for="star3"><span class="text">普通</span>★</label>
+
+    <%= f.radio_button :overall, 2 ,id: 'star4'%>
+    <label for="star4"><span class="text">悪い</span>★</label>
+
+    <%= f.radio_button :overall, 1 ,id: 'star5'%>
+    <label for="star5"><span class="text">最悪</span>★</label>
+ </div>
+
+
+ <%= form_with model: @mask, local:true,html:{multipart: true} do |f| %> 
+ </div>
+ <div class="row mt-4 pb-5">
+    <div class="form-inline mx-auto">
+    <%= f.hidden_field :is_draft, value: false %>
+      <%= f.submit '投稿公開', :name => 'post', class: 'mr-5 btn btn-sm btn-warning text-white' %>
+      <%= f.submit '下書き保存', :name => 'draft', class: 'mr-5 btn btn-sm btn-outline-secondary' %>
+    </div>
+  </div>
+<% end %>
+<% end %>
+<%= link_to "一覧に戻る", masks_path %>
+
+<% if @mask.errors.any? %>
+  <div class="alert alert-danger">
+    <ul>
+      <% @mask.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

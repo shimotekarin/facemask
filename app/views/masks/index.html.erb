@@ -1,0 +1,69 @@
+<h1>投稿一覧</h1>
+
+<% if user_signed_in? %>
+<%= link_to "マイページへ", user_path(current_user.id) %>
+<% end %>
+
+<h3>投稿を検索</h3>
+ <%= form_tag({controller:"masks",action:"index"}, method: :get) do %>
+   <%= text_field_tag :search %>
+   <%= submit_tag '商品検索'  %>
+<% end %>
+
+<%= link_to "新規投稿へ", new_mask_path %>
+
+<%= page_entries_info @masks %>
+<%= paginate @masks %>
+
+<div class="masks-container">
+  <% @masks.order(updated_at: :desc).each do |t| %>
+    
+    <div class="mask">
+    <% if t.user.present? %>
+    <%= link_to t.user.name, user_path(t.user.id) %> 
+     <% else %>
+     <p>ユーザー情報なし</p>
+    <% end %>
+
+    <% if t.image.attached? %>
+      <%= image_tag t.image, size: '250x200'%>
+    <% end %>
+  
+      <%= t.mask_name %>
+      <%= t.skintype %>
+      <%= t.body %>
+
+    <div>
+    <h4>総合評価：
+    <span class="star-rating">
+        <span class="star-rating-front" style="width: <%= getPercent(t.overall) %>%;">★★★★★</span>
+        <span class="star-rating-back">★★★★★</span>
+    </span> 
+    </h4>
+    </div>
+    
+      <% if user_signed_in? %>
+     <% if current_user.already_liked?(t) %>
+        <%= link_to mask_like_path(id: t.id, mask_id: t.id), data: { turbo_method: :delete } do %>
+          <i class="far fa-heart"></i><%= t.likes.count %>
+        <% end %>
+     <% else %>
+        <%= link_to mask_likes_path(id: t.id, mask_id: t.id), data: { turbo_method: :post }  do %>
+           <i class="far fa-heart"></i><%= t.likes.count %>
+        <% end %>
+     <% end %>
+    <% else %>
+    <i class="far fa-heart"></i><%= t.likes.count %>
+    <% end %>
+
+     <%= l t.updated_at, format: :short %>
+      <%= link_to "詳細", mask_path(t.id) %>
+
+      <% if user_signed_in? && current_user.id == t.user_id %>
+      <%= button_to "編集する", edit_mask_path(t.id) %>
+      <%= button_to "削除する", mask_path(t.id), method: :delete %>
+    <% end %>
+
+  </div>
+  <% end %>
+</div>
